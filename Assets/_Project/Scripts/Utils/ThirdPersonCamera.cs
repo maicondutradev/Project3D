@@ -40,7 +40,7 @@ public class ThirdPersonCamera : MonoBehaviour
             if (pitch > 180f) pitch -= 360f;
             pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
         }
-        else
+        else if (lookAction != null && lookAction.action != null)
         {
             Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
 

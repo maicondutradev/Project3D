@@ -12,7 +12,8 @@ public class LockOnSystem : MonoBehaviour
 
     void Update()
     {
-        if (lockOnAction != null && lockOnAction.action.WasPressedThisFrame())
+        // The null check for lockOnAction.action is already present here.
+        if (lockOnAction != null && lockOnAction.action != null && lockOnAction.action.WasPressedThisFrame())
         {
             if (CurrentTarget == null)
             {

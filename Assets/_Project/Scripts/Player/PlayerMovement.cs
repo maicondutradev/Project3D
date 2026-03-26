@@ -30,13 +30,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (attackAction != null && attackAction.action.WasPressedThisFrame() && !isAttacking)
+        if (attackAction != null && attackAction.action != null && attackAction.action.WasPressedThisFrame() && !isAttacking)
         {
             AlignPlayerWithCamera();
             StartCoroutine(AttackRoutine());
         }
 
         if (isAttacking)
+        {
+            return;
+        }
+
+        if (moveAction == null || moveAction.action == null)
         {
             return;
         }
@@ -54,11 +59,17 @@ public class PlayerMovement : MonoBehaviour
             Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDirection.normalized * moveSpeed * Time.deltaTime);
 
-            animator.SetBool("IsWalking", true);
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", true);
+            }
         }
         else
         {
-            animator.SetBool("IsWalking", false);
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
         }
     }
 
