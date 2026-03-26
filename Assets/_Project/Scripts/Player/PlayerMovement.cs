@@ -1,26 +1,25 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float rotationSpeed = 10f;
-    public float attackDuration = 1f;
+    public float gravityMultiplier = 1f;
     public Transform cameraTransform;
-
     public InputActionReference moveAction;
-    public InputActionReference attackAction;
 
     private CharacterController controller;
     private Animator animator;
-    private bool isAttacking = false;
+    private PlayerAttack playerAttack;
+    private float velocityY;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
+        playerAttack = GetComponent<PlayerAttack>();
 
         if (cameraTransform == null)
         {
@@ -30,24 +29,28 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (attackAction != null && attackAction.action != null && attackAction.action.WasPressedThisFrame() && !isAttacking)
+        if (controller.isGrounded && velocityY < 0f)
         {
-            AlignPlayerWithCamera();
-            StartCoroutine(AttackRoutine());
+            velocityY = -2f;
         }
 
-        if (isAttacking)
+        velocityY += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
+
+        if (playerAttack != null && playerAttack.IsAttacking)
         {
+            controller.Move(new Vector3(0f, velocityY, 0f) * Time.deltaTime);
             return;
         }
 
         if (moveAction == null || moveAction.action == null)
         {
+            controller.Move(new Vector3(0f, velocityY, 0f) * Time.deltaTime);
             return;
         }
 
         Vector2 inputVector = moveAction.action.ReadValue<Vector2>();
         Vector3 inputDirection = new Vector3(inputVector.x, 0f, inputVector.y).normalized;
+        Vector3 moveDirection = Vector3.zero;
 
         if (inputDirection.magnitude >= 0.1f)
         {
@@ -56,8 +59,8 @@ public class PlayerMovement : MonoBehaviour
 
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
 
-            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            controller.Move(moveDirection.normalized * moveSpeed * Time.deltaTime);
+            moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            moveDirection = moveDirection.normalized * moveSpeed;
 
             if (animator != null)
             {
@@ -71,27 +74,8 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetBool("IsWalking", false);
             }
         }
-    }
 
-    private void AlignPlayerWithCamera()
-    {
-        Vector3 cameraForward = cameraTransform.forward;
-        cameraForward.y = 0f;
-
-        if (cameraForward.sqrMagnitude > 0.01f)
-        {
-            transform.rotation = Quaternion.LookRotation(cameraForward.normalized);
-        }
-    }
-
-    private IEnumerator AttackRoutine()
-    {
-        isAttacking = true;
-        animator.SetBool("IsWalking", false);
-        animator.SetTrigger("Attack");
-
-        yield return new WaitForSeconds(attackDuration);
-
-        isAttacking = false;
+        moveDirection.y = velocityY;
+        controller.Move(moveDirection * Time.deltaTime);
     }
 }
