@@ -95,6 +95,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Attack2",
+                    "type": "Button",
+                    "id": "2f37ce08-aea2-4a97-a3bc-757407f936ef",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -502,6 +511,28 @@
                     "processors": "",
                     "groups": ";Joystick",
                     "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8c23cfab-910e-4838-85ef-34c7f10ca3a7",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Attack2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c6ea969f-6ffe-4a2f-b10b-60e75cf242fd",
+                    "path": "<XboxOneGamepadAndroid>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

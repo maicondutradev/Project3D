@@ -4,9 +4,15 @@ using System.Collections;
 
 public class PlayerAttack : MonoBehaviour
 {
-    public float attackDuration = 1f;
+    public float attack1Duration = 1f;
+    public float attack2Duration = 1.5f;
+    public float attack2Delay = 0.3f;
     public Transform cameraTransform;
     public InputActionReference attackAction;
+    public InputActionReference attack2Action;
+
+    public GameObject attack2Prefab;
+    public Transform attack2SpawnPoint;
 
     private Animator animator;
     public bool IsAttacking { get; private set; }
@@ -23,10 +29,18 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        if (attackAction != null && attackAction.action != null && attackAction.action.WasPressedThisFrame() && !IsAttacking)
+        if (!IsAttacking)
         {
-            AlignPlayerWithCamera();
-            StartCoroutine(AttackRoutine());
+            if (attackAction != null && attackAction.action != null && attackAction.action.WasPressedThisFrame())
+            {
+                AlignPlayerWithCamera();
+                StartCoroutine(AttackRoutine("Attack", false, attack1Duration));
+            }
+            else if (attack2Action != null && attack2Action.action != null && attack2Action.action.WasPressedThisFrame())
+            {
+                AlignPlayerWithCamera();
+                StartCoroutine(AttackRoutine("Attack2", true, attack2Duration));
+            }
         }
     }
 
@@ -41,17 +55,26 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    private IEnumerator AttackRoutine()
+    private IEnumerator AttackRoutine(string triggerName, bool spawnEffect, float currentAttackDuration)
     {
         IsAttacking = true;
 
         if (animator != null)
         {
             animator.SetBool("IsWalking", false);
-            animator.SetTrigger("Attack");
+            animator.SetTrigger(triggerName);
         }
 
-        yield return new WaitForSeconds(attackDuration);
+        if (spawnEffect && attack2Prefab != null && attack2SpawnPoint != null)
+        {
+            yield return new WaitForSeconds(attack2Delay);
+            Instantiate(attack2Prefab, attack2SpawnPoint.position, attack2SpawnPoint.rotation);
+            yield return new WaitForSeconds(currentAttackDuration - attack2Delay);
+        }
+        else
+        {
+            yield return new WaitForSeconds(currentAttackDuration);
+        }
 
         IsAttacking = false;
     }
