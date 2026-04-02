@@ -1394,7 +1394,7 @@ GameObject:
   - component: {fileID: 1471160884}
   - component: {fileID: 1471160883}
   - component: {fileID: 1471160882}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2172,6 +2172,10 @@ PrefabInstance:
       propertyPath: cameraScript
       value: 
       objectReference: {fileID: 1318076923}
+    - target: {fileID: 1020193879779775177, guid: ccbfe9d332f178942af4e1991306c72d, type: 3}
+      propertyPath: enemyLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 1499445650903921953, guid: ccbfe9d332f178942af4e1991306c72d, type: 3}
       propertyPath: m_Name
       value: Player
